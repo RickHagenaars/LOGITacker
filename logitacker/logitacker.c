@@ -272,6 +272,16 @@ void logitacker_injection_start_execution(bool execute) {
     }
 }
 
+void logitacker_injection_mouse() {
+    NRF_LOG_INFO("logitacker_injection_mouse()");
+    if (m_state_local.mainstate != LOGITACKER_MODE_INJECT) {
+        NRF_LOG_ERROR("Can't inject while not in injection mode");
+        return;
+    }
+
+    logitacker_processor_inject_mouse(p_processor);
+}
+
 uint32_t logitacker_covert_channel_push_data(covert_channel_payload_data_t const *p_tx_data) {
     if (m_state_local.mainstate != LOGITACKER_MODE_COVERT_CHANNEL) {
         NRF_LOG_ERROR("Can't push data, not in covert channel mode");

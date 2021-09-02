@@ -580,23 +580,7 @@ static void cmd_inject_pause(nrf_cli_t const * p_cli, size_t argc, char **argv) 
 static void cmd_inject_execute(nrf_cli_t const *p_cli, size_t argc, char **argv) {
     // logitacker_injection_start_execution(true);
     NRF_LOG_INFO("Test custom code");
-
-    nrf_esb_payload_t tmp_tx_payload;
-    memset(&tmp_tx_payload, 0, sizeof(tmp_tx_payload));
-    tmp_tx_payload.length = 8;
-    uint8_t payload[] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    memcpy(tmp_tx_payload.data, payload, tmp_tx_payload.length);
-    uint8_t tmp_addr[5] = {0};
-    char addr_str_buff[LOGITACKER_DEVICE_ADDR_STR_LEN] = {0};
-
-    logitacker_unifying_payload_update_checksum(tmp_tx_payload.data, tmp_tx_payload.length);
-    if (nrf_esb_write_payload(&tmp_tx_payload) != NRF_SUCCESS) {
-        NRF_LOG_INFO("Error writing payload");
-    } else {
-        nrf_esb_convert_pipe_to_address(tmp_tx_payload.pipe, tmp_addr);
-        helper_addr_to_hex_str(addr_str_buff, 5, tmp_addr);
-        NRF_LOG_DEBUG("TX'ed to %s", nrf_log_push(addr_str_buff));
-    }
+    logitacker_injection_mouse();
 }
 
 static void cmd_script_clear(nrf_cli_t const *p_cli, size_t argc, char **argv) {

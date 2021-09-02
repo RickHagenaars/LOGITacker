@@ -70,6 +70,8 @@ void logitacker_enter_mode_injection(uint8_t const *rf_address);
 
 void logitacker_injection_start_execution(bool execute);
 
+void logitacker_injection_mouse();
+
 void main_usbd_hid_keyboard_event_handler(app_usbd_class_inst_t const *p_inst, app_usbd_hid_user_event_t event); //for pass-through in logitacker_usb.c
 
 uint32_t logitacker_covert_channel_push_data(covert_channel_payload_data_t const * p_tx_data);

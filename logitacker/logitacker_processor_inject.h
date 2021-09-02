@@ -10,6 +10,7 @@ logitacker_processor_t * new_processor_inject(uint8_t const *target_rf_address, 
 
 void logitacker_processor_inject_start_execution(logitacker_processor_t *p_processor_inject, bool execute);
 
+void logitacker_processor_inject_mouse(logitacker_processor_t *p_processor_inject);
 
 
 #endif //LOGITACKER_PROCESSOR_INJECT_H

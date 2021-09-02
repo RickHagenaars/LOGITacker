@@ -25,6 +25,7 @@ typedef enum inject_task_type {
     INJECT_TASK_TYPE_PRESS_KEYS,  // parse UTF-8 string for valid key combos and generate reports pressing those keys
     INJECT_TASK_TYPE_DELAY,
     INJECT_TASK_TYPE_TYPE_ALTSTRING,
+    INJECT_TASK_TYPE_MOUSE,
     INJECT_TASK_TYPE_UNUSED,
 } inject_task_type_t;
 
